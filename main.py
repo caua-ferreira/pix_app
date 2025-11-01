@@ -77,7 +77,8 @@ class PixUnitarioWidget(QWidget):
         self.perfil_destaque.combo.currentIndexChanged.connect(self.preencher_campos_perfil)
         self.preencher_campos_perfil()
     def init_ui(self):
-        main_layout = QVBoxLayout()
+        # layout principal: formulário à esquerda, QR + copia/cola à direita
+        main_layout = QHBoxLayout()
         main_layout.setAlignment(Qt.AlignCenter)
         font = QFont()
         font.setPointSize(12)
@@ -130,24 +131,25 @@ class PixUnitarioWidget(QWidget):
         btn_gerar.setStyleSheet(f"background-color: {COR_PRIMARIA}; color: white; font-weight: bold; border-radius:8px; padding:10px 24px; font-size:16px;")
         btn_gerar.clicked.connect(self.gerar_qr)
 
-        # Área de exibição do QR e copia e cola
+        # Área de exibição do QR e copia e cola (lado direito)
         self.qr_label = QLabel()
         self.qr_label.setAlignment(Qt.AlignCenter)
-        self.qr_label.setStyleSheet("margin-top:16px;")
-        self.qr_label.setFixedSize(220,220)
+        self.qr_label.setStyleSheet("margin:16px;")
+    # tamanho do QR reduzido em 15% (era 360 -> agora 306)
+    self.qr_label.setFixedSize(306, 306)
 
         self.copia_cola = QTextEdit()
         self.copia_cola.setReadOnly(True)
-        self.copia_cola.setFont(QFont("Consolas", 10))
+        self.copia_cola.setFont(QFont("Consolas", 11))
         self.copia_cola.setStyleSheet("background:#f7f7f7; border-radius:8px; border:1px solid #ccc; margin-top:8px; padding:8px;")
-        self.copia_cola.setFixedHeight(60)
+        self.copia_cola.setFixedHeight(100)
         self.copia_cola.viewport().setCursor(Qt.PointingHandCursor)
         self.copia_cola.mousePressEvent = self.copiar_codigo
 
         # Label de feedback de cópia
         self.copied_label = QLabel("")
         self.copied_label.setAlignment(Qt.AlignCenter)
-        self.copied_label.setStyleSheet(f"color: {COR_PRIMARIA}; font-weight: bold; margin-top:4px;")
+        self.copied_label.setStyleSheet(f"color: {COR_PRIMARIA}; font-weight: bold; margin-top:8px;")
 
         # Botão baixar QR
         self.btn_baixar = QPushButton("Baixar QR Code")
@@ -161,24 +163,37 @@ class PixUnitarioWidget(QWidget):
             l.setStyleSheet("border:none; font-weight:bold; margin-bottom:2px;")
             return l
 
-        card_layout.addWidget(label("Chave Pix:"))
-        card_layout.addWidget(self.chave_pix)
-        card_layout.addWidget(label("Cidade:"))
-        card_layout.addWidget(self.cidade)
-        card_layout.addWidget(label("Valor:"))
-        card_layout.addWidget(self.valor)
-        card_layout.addWidget(label("Descrição:"))
-        card_layout.addWidget(self.descricao)
-        card_layout.addWidget(label("Nome da empresa:"))
-        card_layout.addWidget(self.nome_empresa)
-        card_layout.addWidget(label("CNPJ/CPF:"))
-        card_layout.addWidget(self.cnpj_empresa)
-        card_layout.addWidget(btn_gerar)
-        card_layout.addWidget(self.qr_label)
-        card_layout.addWidget(label("Copia e Cola:"))
-        card_layout.addWidget(self.copia_cola)
-        card_layout.addWidget(self.copied_label)
-        card_layout.addWidget(self.btn_baixar)
+        # esquerda: inputs / direita: qr + copia
+        left_layout = QVBoxLayout()
+        left_layout.setAlignment(Qt.AlignTop)
+        left_layout.addWidget(label("Chave Pix:"))
+        left_layout.addWidget(self.chave_pix)
+        left_layout.addWidget(label("Cidade:"))
+        left_layout.addWidget(self.cidade)
+        left_layout.addWidget(label("Valor:"))
+        left_layout.addWidget(self.valor)
+        left_layout.addWidget(label("Descrição:"))
+        left_layout.addWidget(self.descricao)
+        left_layout.addWidget(label("Nome da empresa:"))
+        left_layout.addWidget(self.nome_empresa)
+        left_layout.addWidget(label("CNPJ/CPF:"))
+        left_layout.addWidget(self.cnpj_empresa)
+        left_layout.addWidget(btn_gerar)
+
+        right_layout = QVBoxLayout()
+        right_layout.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
+        right_layout.addWidget(self.qr_label)
+        right_layout.addWidget(label("Copia e Cola:"))
+        right_layout.addWidget(self.copia_cola)
+        right_layout.addWidget(self.copied_label)
+        right_layout.addWidget(self.btn_baixar)
+
+    content_layout = QHBoxLayout()
+    # aumentar espaço para os labels (coluna esquerda) — dar mais peso à esquerda
+    content_layout.addLayout(left_layout, 4)
+    content_layout.addLayout(right_layout, 2)
+
+        card_layout.addLayout(content_layout)
 
         card.setLayout(card_layout)
         main_layout.addStretch()
@@ -207,7 +222,7 @@ class PixUnitarioWidget(QWidget):
         temp_path = "temp_qr_pix.png"
         gerar_qr_pix(self.payload, temp_path)
         pixmap = QPixmap(temp_path)
-        self.qr_label.setPixmap(pixmap.scaled(220,220, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+    self.qr_label.setPixmap(pixmap.scaled(306,306, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         self.copia_cola.setText(self.payload)
         self.btn_baixar.setVisible(True)
         self.copied_label.setText("")
@@ -251,7 +266,7 @@ class PixUnitarioWidget(QWidget):
         temp_path = "temp_qr_pix.png"
         gerar_qr_pix(self.payload, temp_path)
         pixmap = QPixmap(temp_path)
-        self.qr_label.setPixmap(pixmap.scaled(220,220, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+    self.qr_label.setPixmap(pixmap.scaled(306,306, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         self.copia_cola.setText(self.payload)
         self.btn_baixar.setVisible(True)
         # Remove arquivo temporário
@@ -521,24 +536,33 @@ class PerfilDestaqueWidget(QWidget):
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        screen = QDesktopWidget().screenGeometry()
-        largura = int(600 * 0.90)
-        altura = int(600 * 0.90)
+        # abrir com tamanho fixo 680x850 e centralizar
         self.setWindowTitle("Pix QR Code")
-        self.setGeometry(90, 90, largura, altura)
+        self.setFixedSize(680, 850)
+        # centraliza a janela
+        center_point = QDesktopWidget().availableGeometry().center()
+        self.move(center_point.x() - 680 // 2, center_point.y() - 850 // 2)
         self.config = PixConfig(CONFIG_FILE)
         self.perfis_manager = PerfisManager(PERFIS_FILE)
         self.init_ui()
     def init_ui(self):
         central_widget = QWidget()
-        vlayout = QVBoxLayout()
+        # layout horizontal: esquerda = painel principal (perfil + tabs)
+        central_layout = QHBoxLayout()
+
+        left_container = QWidget()
+        left_vlayout = QVBoxLayout()
         self.perfil_destaque = PerfilDestaqueWidget(self.perfis_manager)
-        vlayout.addWidget(self.perfil_destaque)
+        left_vlayout.addWidget(self.perfil_destaque)
         self.tabs = QTabWidget()
         self.tabs.addTab(PixUnitarioWidget(self.config, self.perfil_destaque), "Gerar Pix Unitário")
         self.tabs.addTab(PixMassaWidget(self.config, self.perfil_destaque), "Gerar Pix em Massa")
-        vlayout.addWidget(self.tabs)
-        central_widget.setLayout(vlayout)
+        left_vlayout.addWidget(self.tabs)
+        left_container.setLayout(left_vlayout)
+
+        central_layout.addWidget(left_container, 3)
+        # espaço restante à direita ficará com o conteúdo responsivo (QR está dentro do tab)
+        central_widget.setLayout(central_layout)
         self.setCentralWidget(central_widget)
         pal = self.palette()
         pal.setColor(QPalette.Window, QColor(COR_FUNDO))
