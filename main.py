@@ -131,6 +131,7 @@ class PixUnitarioWidget(QWidget):
         # Botão gerar
         btn_gerar = QPushButton("Gerar QR Code")
         btn_gerar.setStyleSheet(f"background-color: {COR_PRIMARIA}; color: white; font-weight: bold; border-radius:8px; padding:10px 24px; font-size:16px;")
+        btn_gerar.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         btn_gerar.clicked.connect(self.gerar_qr)
 
         # Área de exibição do QR e copia e cola (lado direito)
@@ -138,7 +139,7 @@ class PixUnitarioWidget(QWidget):
         self.qr_label.setAlignment(Qt.AlignCenter)
         self.qr_label.setStyleSheet("margin:16px;")
         # tamanho do QR reduzido em 15% (era 360 -> agora 306)
-        self.qr_label.setFixedSize(306, 306)
+        self.qr_label.setFixedSize(200, 200)
 
         self.copia_cola = QTextEdit()
         self.copia_cola.setReadOnly(True)
@@ -151,7 +152,9 @@ class PixUnitarioWidget(QWidget):
         # Botão baixar QR
         self.btn_baixar = QPushButton("Baixar QR Code")
         self.btn_baixar.setStyleSheet(f"background-color: {COR_PRIMARIA}; color: white; font-weight: bold; border-radius:8px; padding:8px 20px; font-size:14px;")
-        self.btn_baixar.setVisible(False)
+        # manter o botão visível mas desabilitado até que um QR seja gerado
+        self.btn_baixar.setEnabled(False)
+        self.btn_baixar.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.btn_baixar.clicked.connect(self.baixar_qr)
 
         # Labels sem borda azul
@@ -163,6 +166,8 @@ class PixUnitarioWidget(QWidget):
         # esquerda: inputs / direita: qr + copia
         left_layout = QVBoxLayout()
         left_layout.setAlignment(Qt.AlignTop)
+        left_layout.setContentsMargins(6, 6, 6, 6)
+        left_layout.setSpacing(10)
         left_layout.addWidget(label("Chave Pix:"))
         left_layout.addWidget(self.chave_pix)
         left_layout.addWidget(label("Cidade:"))
@@ -175,28 +180,38 @@ class PixUnitarioWidget(QWidget):
         left_layout.addWidget(self.nome_empresa)
         left_layout.addWidget(label("CNPJ/CPF:"))
         left_layout.addWidget(self.cnpj_empresa)
-        left_layout.addWidget(btn_gerar)
+        # botões: Gerar e Baixar lado a lado
+        btn_row = QHBoxLayout()
+        btn_row.setContentsMargins(0, 0, 0, 0)
+        btn_row.setSpacing(10)
+        # garantir que os dois botões partilhem o espaço disponível
+        btn_row.addWidget(btn_gerar)
+        btn_row.addWidget(self.btn_baixar)
+        btn_row.setStretch(0, 1)
+        btn_row.setStretch(1, 1)
+        # aumentar um pouco a altura dos botões para melhor presença
+        btn_gerar.setMinimumHeight(44)
+        self.btn_baixar.setMinimumHeight(44)
+        # envolver em widget para garantir que a linha ocupe toda a largura disponível
+        btn_container = QWidget()
+        btn_container.setLayout(btn_row)
+        btn_container.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        left_layout.addWidget(btn_container)
 
         right_layout = QVBoxLayout()
         right_layout.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
         right_layout.addWidget(self.qr_label)
-        right_layout.addWidget(self.btn_baixar)
 
         content_layout = QHBoxLayout()
         # aumentar espaço para os labels (coluna esquerda) — dar mais peso à esquerda
-        # usamos proporção 5:3 para favorecer a área de inputs
-        content_layout.addLayout(left_layout, 5)
+        # usamos proporção 7:3 para favorecer a área de inputs e permitir botões largos
+        content_layout.addLayout(left_layout, 7)
         content_layout.addLayout(right_layout, 3)
 
         card_layout.addLayout(content_layout)
         # copia e cola abaixo, ocupando toda a largura do card
         card_layout.addWidget(label("Copia e Cola:"))
         card_layout.addWidget(self.copia_cola)
-        # botão de baixar alinhado à direita abaixo da area de copia
-        btn_box = QHBoxLayout()
-        btn_box.addStretch()
-        btn_box.addWidget(self.btn_baixar)
-        card_layout.addLayout(btn_box)
 
         card.setLayout(card_layout)
         main_layout.addStretch()
@@ -227,7 +242,7 @@ class PixUnitarioWidget(QWidget):
         pixmap = QPixmap(temp_path)
         self.qr_label.setPixmap(pixmap.scaled(306,306, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         self.copia_cola.setText(self.payload)
-        self.btn_baixar.setVisible(True)
+        self.btn_baixar.setEnabled(True)
         try:
             os.remove(temp_path)
         except Exception:
@@ -284,7 +299,7 @@ class PixUnitarioWidget(QWidget):
         pixmap = QPixmap(temp_path)
         self.qr_label.setPixmap(pixmap.scaled(306,306, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         self.copia_cola.setText(self.payload)
-        self.btn_baixar.setVisible(True)
+        self.btn_baixar.setEnabled(True)
         # Remove arquivo temporário
         try:
             os.remove(temp_path)
