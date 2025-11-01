@@ -130,7 +130,7 @@ class PixUnitarioWidget(QWidget):
 
         # Botão gerar
         btn_gerar = QPushButton("Gerar QR Code")
-        btn_gerar.setStyleSheet(f"background-color: {COR_PRIMARIA}; color: white; font-weight: bold; border-radius:8px; padding:10px 24px; font-size:16px;")
+        btn_gerar.setStyleSheet(f"background-color: {COR_PRIMARIA}; color: white; font-weight: bold; border-radius:8px; padding:10px 24px; font-size:16px; border: none;")
         btn_gerar.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         btn_gerar.clicked.connect(self.gerar_qr)
 
@@ -151,7 +151,7 @@ class PixUnitarioWidget(QWidget):
 
         # Botão baixar QR
         self.btn_baixar = QPushButton("Baixar QR Code")
-        self.btn_baixar.setStyleSheet(f"background-color: {COR_PRIMARIA}; color: white; font-weight: bold; border-radius:8px; padding:8px 20px; font-size:14px;")
+        self.btn_baixar.setStyleSheet(f"background-color: {COR_PRIMARIA}; color: white; font-weight: bold; border-radius:8px; padding:8px 20px; font-size:14px; border: none;")
         # manter o botão visível mas desabilitado até que um QR seja gerado
         self.btn_baixar.setEnabled(False)
         self.btn_baixar.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
@@ -160,7 +160,8 @@ class PixUnitarioWidget(QWidget):
         # Labels sem borda azul
         def label(text):
             l = QLabel(text)
-            l.setStyleSheet("border:none; font-weight:bold; margin-bottom:2px;")
+            # aumentar tamanho e espaçamento dos labels para melhor legibilidade
+            l.setStyleSheet("border:none; font-weight:bold; margin-bottom:6px; font-size:13px; padding:6px 0;")
             return l
 
         # esquerda: inputs / direita: qr + copia
@@ -183,7 +184,7 @@ class PixUnitarioWidget(QWidget):
         # botões: Gerar e Baixar lado a lado
         btn_row = QHBoxLayout()
         btn_row.setContentsMargins(0, 0, 0, 0)
-        btn_row.setSpacing(10)
+        btn_row.setSpacing(0)
         # garantir que os dois botões partilhem o espaço disponível
         btn_row.addWidget(btn_gerar)
         btn_row.addWidget(self.btn_baixar)
