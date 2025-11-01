@@ -3,7 +3,7 @@ import os
 import json
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton,
-    QTableWidget, QTableWidgetItem, QFileDialog, QMessageBox, QTabWidget, QHeaderView, QComboBox, QFrame, QTextEdit, QDialog, QDesktopWidget
+    QTableWidget, QTableWidgetItem, QFileDialog, QMessageBox, QTabWidget, QHeaderView, QComboBox, QFrame, QTextEdit, QDialog, QDesktopWidget, QSizePolicy
 )
 from PyQt5.QtGui import QIcon, QFont, QColor, QPalette, QPixmap
 from PyQt5.QtCore import Qt
@@ -82,13 +82,15 @@ class PixUnitarioWidget(QWidget):
         main_layout.setAlignment(Qt.AlignCenter)
         font = QFont()
         font.setPointSize(12)
-
-
         # Card visual
         card = QFrame()
         card.setStyleSheet(f"background: {COR_FUNDO}; border-radius: 16px; border: 2px solid {COR_PRIMARIA};")
         card_layout = QVBoxLayout()
         card_layout.setAlignment(Qt.AlignCenter)
+        # tornar o card mais largo para dar espaço aos inputs
+        # janela principal tem 680px, então deixamos o card com largura mínima confortável
+        card.setMinimumWidth(620)
+        card.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
 
         # Chave Pix
         self.chave_pix = QLineEdit()
@@ -190,8 +192,9 @@ class PixUnitarioWidget(QWidget):
 
         content_layout = QHBoxLayout()
         # aumentar espaço para os labels (coluna esquerda) — dar mais peso à esquerda
-        content_layout.addLayout(left_layout, 4)
-        content_layout.addLayout(right_layout, 2)
+        # usamos proporção 5:3 para favorecer a área de inputs
+        content_layout.addLayout(left_layout, 5)
+        content_layout.addLayout(right_layout, 3)
 
         card_layout.addLayout(content_layout)
 
