@@ -135,8 +135,8 @@ class PixUnitarioWidget(QWidget):
         self.qr_label = QLabel()
         self.qr_label.setAlignment(Qt.AlignCenter)
         self.qr_label.setStyleSheet("margin:16px;")
-    # tamanho do QR reduzido em 15% (era 360 -> agora 306)
-    self.qr_label.setFixedSize(306, 306)
+        # tamanho do QR reduzido em 15% (era 360 -> agora 306)
+        self.qr_label.setFixedSize(306, 306)
 
         self.copia_cola = QTextEdit()
         self.copia_cola.setReadOnly(True)
@@ -188,10 +188,10 @@ class PixUnitarioWidget(QWidget):
         right_layout.addWidget(self.copied_label)
         right_layout.addWidget(self.btn_baixar)
 
-    content_layout = QHBoxLayout()
-    # aumentar espaço para os labels (coluna esquerda) — dar mais peso à esquerda
-    content_layout.addLayout(left_layout, 4)
-    content_layout.addLayout(right_layout, 2)
+        content_layout = QHBoxLayout()
+        # aumentar espaço para os labels (coluna esquerda) — dar mais peso à esquerda
+        content_layout.addLayout(left_layout, 4)
+        content_layout.addLayout(right_layout, 2)
 
         card_layout.addLayout(content_layout)
 
@@ -222,7 +222,7 @@ class PixUnitarioWidget(QWidget):
         temp_path = "temp_qr_pix.png"
         gerar_qr_pix(self.payload, temp_path)
         pixmap = QPixmap(temp_path)
-    self.qr_label.setPixmap(pixmap.scaled(306,306, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        self.qr_label.setPixmap(pixmap.scaled(306,306, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         self.copia_cola.setText(self.payload)
         self.btn_baixar.setVisible(True)
         self.copied_label.setText("")
@@ -266,7 +266,7 @@ class PixUnitarioWidget(QWidget):
         temp_path = "temp_qr_pix.png"
         gerar_qr_pix(self.payload, temp_path)
         pixmap = QPixmap(temp_path)
-    self.qr_label.setPixmap(pixmap.scaled(306,306, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        self.qr_label.setPixmap(pixmap.scaled(306,306, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         self.copia_cola.setText(self.payload)
         self.btn_baixar.setVisible(True)
         # Remove arquivo temporário
