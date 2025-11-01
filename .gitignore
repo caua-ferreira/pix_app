@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+.env
+.env.*
+.venv/
+
+# PyInstaller
+dist/
+build/
+*.spec
+
+# Editor files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# virtual env
+.venv/
+
+# distribution
+*.exe
+
+# User data
+pix_gerados.json
