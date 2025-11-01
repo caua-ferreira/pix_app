@@ -1,72 +1,78 @@
-# Pix QR Code Desktop
-# PixApp — Gerador de QR Code Pix (desktop)
+## PixApp — Gerador de QR Code Pix (desktop)
 
-Essa é uma versão genérica do app para gerar QR Codes do Pix (unitário e em massa) em desktop Windows.
+Quantas vezes voce já quis gerar um QR Code Pix rapidamente no seu computador desktop Windows, sem depender de apps móveis ou sites online? Pois bem!
+
+Esse é um app para gerar QR Codes do Pix (unitário e em massa) em desktop Windows.
+Sem complicações, rápido e fácil de usar!
+Roda totalmente offline, sem necessidade de internet após a instalação.
+O código é open source e pode ser avaliado e modificado conforme sua necessidade (não esqueça de me atribuir :)
+Veja abaixo as instruções para rodar localmente ou gerar um executável.
+
 
 Principais arquivos
-- `main.py` — interface PyQt5 e ponto de entrada.
-- `pix_utils.py` — funções para gerar payload e imagem do QR.
-- `perfis.json` — exemplos de perfis (empresa). Salve seus perfis locais aqui.
-- `pix_config.json` — configurações persistentes (chave pix, cidade).
+- `main.py` — interface PyQt5 / ponto de entrada
+- `pix_utils.py` — lógica para gerar o payload e imagens do QR
+- `perfis.json` — perfis de cobrança de exemplo (guarde seus perfis aqui)
+- `pix_config.json` — configurações persistentes (ex.: chave, cidade)
 
 Requisitos
-- Python 3.8+ (recomendado 3.9/3.10)
-- PyQt5, qrcode, pillow (veja `requirements.txt`)
+- Python 3.8+ (3.9/3.10 recomendados)
+- Dependências: veja `requirements.txt` (PyQt5, qrcode, Pillow, ...)
 
-Uso (rápido)
-1. Instale dependências (recomendado em virtualenv):
+Uso rápido (desenvolvimento)
+1. Criar/ativar virtualenv e instalar dependências:
 
 ```powershell
-python -m venv .venv; .\.venv\Scripts\Activate.ps1
+python -m venv .venv
+.\\.venv\\Scripts\\Activate.ps1
 pip install -r requirements.txt
 ```
 
-2. Execute localmente para testar:
+2. Executar localmente:
 
 ```powershell
 python main.py
 ```
 
-Gerando um executável para Windows
+Gerar executável / instalador (Windows)
 
-Incluí um script PowerShell de ajuda `build_windows.ps1` que:
-- cria (opcional) virtualenv
-- instala dependências
-- executa PyInstaller para gerar a pasta `dist\PixApp\` (ou `dist\PixApp.exe` se usar --onefile)
+Opções comuns:
 
-Como usar o script (PowerShell):
+- Usar `build_windows.ps1` (suporta PyInstaller e tenta criar instalador Inno quando disponível). Exemplo:
 
 ```powershell
-.\build_windows.ps1
+.\\build_windows.ps1
 ```
 
-O script também tenta criar um instalador Inno Setup se o compilador do Inno estiver instalado (ISCC.exe).
-Um template de script Inno está em `installer\pix_app.iss`.
+- Para um único `.exe` com PyInstaller, edite `build_windows.ps1` e passe `--onefile` para o comando do PyInstaller.
 
-Dicas de empacotamento
-- Para gerar um único .exe (onefile): altere o trecho do PyInstaller no `build_windows.ps1` para `--onefile`.
-- Inclua imagens e arquivos (ex.: `perfis.json`, `Logo Oficial.png`) com a opção `--add-data "arquivo;."` do PyInstaller.
+- O template do Inno Setup está em `PixApp.iss` (ou `installer/pix_app.iss`). Para compilar localmente com Inno use o Inno Setup Compiler (ISCC.exe).
 
-Estrutura sugerida
+Observação sobre releases e binários
 
-```
-pix_app/
-  __init__.py
-  pix_utils.py
-main.py
-perfis.json
-pix_config.json
-Logo Oficial.png
-requirements.txt
-README.md
-build_windows.ps1
-installer/pix_app.iss
-```
+Por padrão não é recomendável commitar grandes binários (instaladores) dentro do repositório Git. Boas práticas:
 
-Suporte
-- Este projeto é open-source para uso geral. Se quiser adicionar um site de suporte, substitua esta seção por um contato ou repositório Git.
+- Subir o código-fonte no repositório (o que já está aqui).
+- Publicar instaladores como "Release assets" no GitHub Releases — assim o repositório permanece enxuto.
 
-Próximos passos recomendados
-- (Opcional) Colocar o código dentro de um package (`pix_app/`) para facilitar distribuição via pip.
-- Criar testes unitários para `pix_utils.py`.
-- Adicionar ícone e assets ao instalador.
+No repositório atual há um instalador gerado (`installer/PixApp_Setup.exe`) que foi adicionado por conveniência — se preferir, posso remover o binário e gerar um release para você.
+
+Configuração do instalador (Inno Setup)
+
+- Arquivo de exemplo: `PixApp.iss`.
+- O script inclui os arquivos: `PixApp.exe`, `perfis.json`, `pix_config.json`, `pix_gerados.json`.
+
+Contribuição
+
+1. Fork
+2. Criar branch: `git checkout -b feat/minha-feature`
+3. Commit: `git commit -m "Add feature"`
+4. Push e abrir Pull Request
+
+Licença
+
+Este projeto está licenciado sob MIT — veja o arquivo `LICENSE`.
+
+Autor / Contato
+
+Cauã Ferreira — https://github.com/caua-ferreira
