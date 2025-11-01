@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import (
     QTableWidget, QTableWidgetItem, QFileDialog, QMessageBox, QTabWidget, QHeaderView, QComboBox, QFrame, QTextEdit, QDialog, QDesktopWidget, QSizePolicy
 )
 from PyQt5.QtGui import QIcon, QFont, QColor, QPalette, QPixmap
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
 from pix_app.pix_utils import gerar_payload_pix, gerar_qr_pix
 
 CONFIG_FILE = "pix_config.json"
@@ -148,11 +148,6 @@ class PixUnitarioWidget(QWidget):
         self.copia_cola.viewport().setCursor(Qt.PointingHandCursor)
         self.copia_cola.mousePressEvent = self.copiar_codigo
 
-        # Label de feedback de cópia
-        self.copied_label = QLabel("")
-        self.copied_label.setAlignment(Qt.AlignCenter)
-        self.copied_label.setStyleSheet(f"color: {COR_PRIMARIA}; font-weight: bold; margin-top:8px;")
-
         # Botão baixar QR
         self.btn_baixar = QPushButton("Baixar QR Code")
         self.btn_baixar.setStyleSheet(f"background-color: {COR_PRIMARIA}; color: white; font-weight: bold; border-radius:8px; padding:8px 20px; font-size:14px;")
@@ -185,9 +180,6 @@ class PixUnitarioWidget(QWidget):
         right_layout = QVBoxLayout()
         right_layout.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
         right_layout.addWidget(self.qr_label)
-        right_layout.addWidget(label("Copia e Cola:"))
-        right_layout.addWidget(self.copia_cola)
-        right_layout.addWidget(self.copied_label)
         right_layout.addWidget(self.btn_baixar)
 
         content_layout = QHBoxLayout()
@@ -197,6 +189,14 @@ class PixUnitarioWidget(QWidget):
         content_layout.addLayout(right_layout, 3)
 
         card_layout.addLayout(content_layout)
+        # copia e cola abaixo, ocupando toda a largura do card
+        card_layout.addWidget(label("Copia e Cola:"))
+        card_layout.addWidget(self.copia_cola)
+        # botão de baixar alinhado à direita abaixo da area de copia
+        btn_box = QHBoxLayout()
+        btn_box.addStretch()
+        btn_box.addWidget(self.btn_baixar)
+        card_layout.addLayout(btn_box)
 
         card.setLayout(card_layout)
         main_layout.addStretch()
@@ -228,7 +228,6 @@ class PixUnitarioWidget(QWidget):
         self.qr_label.setPixmap(pixmap.scaled(306,306, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         self.copia_cola.setText(self.payload)
         self.btn_baixar.setVisible(True)
-        self.copied_label.setText("")
         try:
             os.remove(temp_path)
         except Exception:
@@ -238,8 +237,22 @@ class PixUnitarioWidget(QWidget):
         if self.payload:
             clipboard = QApplication.clipboard()
             clipboard.setText(self.payload)
-            self.copied_label.setText("Código copiado!")
+            self.show_temp_popup("Código copiado!")
         QTextEdit.mousePressEvent(self.copia_cola, event)
+
+    def show_temp_popup(self, text: str, duration_ms: int = 2000):
+        popup = QLabel(text, self)
+        popup.setStyleSheet("background:#333;color:white;padding:8px;border-radius:6px;")
+        popup.setAttribute(Qt.WA_TransparentForMouseEvents)
+        popup.adjustSize()
+        # posiciona acima do centro da area de copia
+        g = self.copia_cola.mapToGlobal(self.copia_cola.rect().center())
+        local = self.mapFromGlobal(g)
+        x = max(10, local.x() - popup.width() // 2)
+        y = max(10, local.y() - popup.height() - 10)
+        popup.move(x, y)
+        popup.show()
+        QTimer.singleShot(duration_ms, popup.deleteLater)
 
     def baixar_qr(self):
         if self.payload:
