@@ -24,7 +24,7 @@ Name: "brazilianportuguese"; MessagesFile: "compiler:Languages\BrazilianPortugue
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "{%USERPROFILE}\Desktop\PixApp.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "PixApp.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "perfis.json"; DestDir: "{app}"; Flags: ignoreversion
 Source: "pix_config.json"; DestDir: "{app}"; Flags: ignoreversion
 Source: "pix_gerados.json"; DestDir: "{app}"; Flags: ignoreversion
