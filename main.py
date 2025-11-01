@@ -14,6 +14,35 @@ PERFIS_FILE = "perfis.json"
 COR_PRIMARIA = "#036da1"
 COR_FUNDO = "white"
 
+# Textos
+MSG_CAMPOS_OBRIGATORIOS = "Campos obrigatórios"
+MSG_PREENCHER_CAMPOS = "Preencha chave Pix, cidade, valor e nome."
+MSG_PREENCHER_CAMPOS_PIX = "Preencha chave Pix e cidade."
+LABEL_NOME_EMPRESA = "Nome da empresa"
+MSG_VALOR_INVALIDO = "Valor inválido"
+MSG_DIGITE_VALOR_VALIDO = "Digite um valor válido."
+MSG_SUCESSO = "Sucesso"
+MSG_QR_SALVO = "QR Code salvo em {}"
+MSG_QRS_GERADOS = "{} QR Codes gerados na pasta {}"
+MSG_PERFIL_SALVO_TITULO = "Perfil salvo"
+MSG_PERFIL_SALVO = "Perfil salvo com sucesso!"
+MSG_PERFIL_REMOVIDO_TITULO = "Perfil removido"
+MSG_PERFIL_REMOVIDO = "Perfil removido com sucesso!"
+
+# Dimensões
+ALTURA_INPUT = 42  # altura dos campos de entrada
+
+# Estilos
+ESTILO_INPUT = "padding:10px 12px; border-radius:8px; border:1px solid #ccc; margin-bottom:12px; font-size: 13px;"
+ESTILO_BTN_PRIMARIO = f"background-color: {COR_PRIMARIA}; color: white; font-weight: bold; border-radius:8px; padding:2px 24px; font-size:16px; border: none;"
+ESTILO_BTN_SECUNDARIO = f"background-color: {COR_PRIMARIA}; color: white; font-weight: bold; border-radius:8px; padding:2px 20px; font-size:14px; border: none;"
+ESTILO_LABEL = "border:none; font-weight:bold; margin-bottom:2px; font-size:12px;"
+ESTILO_BTN_CONFIG = "border:none; background:none; margin:8px;"
+ESTILO_TOOLBAR = "background:transparent; border:none;"
+ESTILO_QR_LABEL = "margin:16px;"
+ESTILO_COPIA_COLA = "background:#f7f7f7; border-radius:8px; border:1px solid #ccc; margin-top:8px; padding:2px;"
+ESTILO_POPUP = "background:#333;color:white;padding:2px;border-radius:6px;"
+
 class PerfisManager:
     def __init__(self, path):
         self.path = path
@@ -81,7 +110,7 @@ class PixUnitarioWidget(QWidget):
         main_layout = QHBoxLayout()
         main_layout.setAlignment(Qt.AlignCenter)
         font = QFont()
-        font.setPointSize(12)
+        font.setPointSize(10)
         # Card visual
         card = QFrame()
         card.setStyleSheet(f"background: {COR_FUNDO}; border-radius: 16px; border: 2px solid {COR_PRIMARIA};")
@@ -96,62 +125,68 @@ class PixUnitarioWidget(QWidget):
         self.chave_pix = QLineEdit()
         self.chave_pix.setPlaceholderText("CNPJ ou chave Pix")
         self.chave_pix.setFont(font)
-        self.chave_pix.setStyleSheet("padding:8px; border-radius:8px; border:1px solid #ccc; margin-bottom:8px;")
+        self.chave_pix.setStyleSheet(ESTILO_INPUT)
+        self.chave_pix.setMinimumHeight(ALTURA_INPUT)
 
         # Cidade
         self.cidade = QLineEdit()
         self.cidade.setPlaceholderText("Cidade")
         self.cidade.setFont(font)
-        self.cidade.setStyleSheet("padding:8px; border-radius:8px; border:1px solid #ccc; margin-bottom:8px;")
+        self.cidade.setStyleSheet(ESTILO_INPUT)
+        self.cidade.setMinimumHeight(ALTURA_INPUT)
 
         # Valor
         self.valor = QLineEdit()
         self.valor.setPlaceholderText("Valor (ex: 150,00 ou 150.00)")
         self.valor.setFont(font)
-        self.valor.setStyleSheet("padding:8px; border-radius:8px; border:1px solid #ccc; margin-bottom:8px;")
+        self.valor.setStyleSheet(ESTILO_INPUT)
+        self.valor.setMinimumHeight(ALTURA_INPUT)
 
         # Descrição
         self.descricao = QLineEdit()
         self.descricao.setPlaceholderText("Descrição (máx 25 bytes)")
         self.descricao.setFont(font)
-        self.descricao.setStyleSheet("padding:8px; border-radius:8px; border:1px solid #ccc; margin-bottom:8px;")
+        self.descricao.setStyleSheet(ESTILO_INPUT)
+        self.descricao.setMinimumHeight(ALTURA_INPUT)
 
         # Nome da empresa
         self.nome_empresa = QLineEdit()
-        self.nome_empresa.setPlaceholderText("Nome da empresa")
+        self.nome_empresa.setPlaceholderText(LABEL_NOME_EMPRESA)
         self.nome_empresa.setFont(font)
-        self.nome_empresa.setStyleSheet("padding:8px; border-radius:8px; border:1px solid #ccc; margin-bottom:8px;")
+        self.nome_empresa.setStyleSheet(ESTILO_INPUT)
+        self.nome_empresa.setMinimumHeight(ALTURA_INPUT)
 
         # CNPJ da empresa
         self.cnpj_empresa = QLineEdit()
         self.cnpj_empresa.setPlaceholderText("CNPJ/CPF")
         self.cnpj_empresa.setFont(font)
-        self.cnpj_empresa.setStyleSheet("padding:8px; border-radius:8px; border:1px solid #ccc; margin-bottom:8px;")
+        self.cnpj_empresa.setStyleSheet(ESTILO_INPUT)
+        self.cnpj_empresa.setMinimumHeight(ALTURA_INPUT)
 
         # Botão gerar
         btn_gerar = QPushButton("Gerar QR Code")
-        btn_gerar.setStyleSheet(f"background-color: {COR_PRIMARIA}; color: white; font-weight: bold; border-radius:8px; padding:10px 24px; font-size:16px; border: none;")
+        btn_gerar.setStyleSheet(ESTILO_BTN_PRIMARIO)
         btn_gerar.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         btn_gerar.clicked.connect(self.gerar_qr)
 
         # Área de exibição do QR e copia e cola (lado direito)
         self.qr_label = QLabel()
         self.qr_label.setAlignment(Qt.AlignCenter)
-        self.qr_label.setStyleSheet("margin:16px;")
+        self.qr_label.setStyleSheet(ESTILO_QR_LABEL)
         # tamanho do QR reduzido em 15% (era 360 -> agora 306)
         self.qr_label.setFixedSize(200, 200)
 
         self.copia_cola = QTextEdit()
         self.copia_cola.setReadOnly(True)
         self.copia_cola.setFont(QFont("Consolas", 11))
-        self.copia_cola.setStyleSheet("background:#f7f7f7; border-radius:8px; border:1px solid #ccc; margin-top:8px; padding:8px;")
+        self.copia_cola.setStyleSheet(ESTILO_COPIA_COLA)
         self.copia_cola.setFixedHeight(100)
         self.copia_cola.viewport().setCursor(Qt.PointingHandCursor)
         self.copia_cola.mousePressEvent = self.copiar_codigo
 
         # Botão baixar QR
         self.btn_baixar = QPushButton("Baixar QR Code")
-        self.btn_baixar.setStyleSheet(f"background-color: {COR_PRIMARIA}; color: white; font-weight: bold; border-radius:8px; padding:8px 20px; font-size:14px; border: none;")
+        self.btn_baixar.setStyleSheet(ESTILO_BTN_SECUNDARIO)
         # manter o botão visível mas desabilitado até que um QR seja gerado
         self.btn_baixar.setEnabled(False)
         self.btn_baixar.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
@@ -160,14 +195,14 @@ class PixUnitarioWidget(QWidget):
         # Labels sem borda azul
         def label(text):
             l = QLabel(text)
-            # aumentar tamanho e espaçamento dos labels para melhor legibilidade
-            l.setStyleSheet("border:none; font-weight:bold; margin-bottom:6px; font-size:13px; padding:6px 0;")
+            # tamanho e espaçamento moderados para evitar aparência achatada
+            l.setStyleSheet(ESTILO_LABEL)
             return l
 
         # esquerda: inputs / direita: qr + copia
         left_layout = QVBoxLayout()
         left_layout.setAlignment(Qt.AlignTop)
-        left_layout.setContentsMargins(6, 6, 6, 6)
+        left_layout.setContentsMargins(4, 4, 4, 4)
         left_layout.setSpacing(10)
         left_layout.addWidget(label("Chave Pix:"))
         left_layout.addWidget(self.chave_pix)
@@ -184,7 +219,7 @@ class PixUnitarioWidget(QWidget):
         # botões: Gerar e Baixar lado a lado
         btn_row = QHBoxLayout()
         btn_row.setContentsMargins(0, 0, 0, 0)
-        btn_row.setSpacing(0)
+        btn_row.setSpacing(10)
         # garantir que os dois botões partilhem o espaço disponível
         btn_row.addWidget(btn_gerar)
         btn_row.addWidget(self.btn_baixar)
@@ -258,7 +293,7 @@ class PixUnitarioWidget(QWidget):
 
     def show_temp_popup(self, text: str, duration_ms: int = 2000):
         popup = QLabel(text, self)
-        popup.setStyleSheet("background:#333;color:white;padding:8px;border-radius:6px;")
+        popup.setStyleSheet(ESTILO_POPUP)
         popup.setAttribute(Qt.WA_TransparentForMouseEvents)
         popup.adjustSize()
         # posiciona acima do centro da area de copia
@@ -275,7 +310,7 @@ class PixUnitarioWidget(QWidget):
             file_path, _ = QFileDialog.getSaveFileName(self, "Salvar QR Code", "qrcode_pix.png", "PNG Files (*.png)")
             if file_path:
                 gerar_qr_pix(self.payload, file_path)
-                QMessageBox.information(self, "Sucesso", f"QR Code salvo em {file_path}")
+                QMessageBox.information(self, MSG_SUCESSO, MSG_QR_SALVO.format(file_path))
 
     def gerar_qr(self):
         chave = self.chave_pix.text().strip()
@@ -289,7 +324,7 @@ class PixUnitarioWidget(QWidget):
         try:
             valor_float = float(valor.replace(",", "."))
         except Exception:
-            QMessageBox.warning(self, "Valor inválido", "Digite um valor válido.")
+            QMessageBox.warning(self, MSG_VALOR_INVALIDO, MSG_DIGITE_VALOR_VALIDO)
             return
         self.config.set("chave_pix", chave)
         self.config.set("cidade", cidade)
@@ -306,13 +341,6 @@ class PixUnitarioWidget(QWidget):
             os.remove(temp_path)
         except Exception:
             pass
-
-    def baixar_qr(self):
-        if self.payload:
-            file_path, _ = QFileDialog.getSaveFileName(self, "Salvar QR Code", "qrcode_pix.png", "PNG Files (*.png)")
-            if file_path:
-                gerar_qr_pix(self.payload, file_path)
-                QMessageBox.information(self, "Sucesso", f"QR Code salvo em {file_path}")
 
     def preencher_campos_perfil(self):
         perfil = self.perfil_destaque.perfil_ativo()
@@ -375,7 +403,7 @@ class PixMassaWidget(QWidget):
         chave = self.chave_pix.text().strip()
         cidade = self.cidade.text().strip()
         if not chave or not cidade:
-            QMessageBox.warning(self, "Campos obrigatórios", "Preencha chave Pix e cidade.")
+            QMessageBox.warning(self, MSG_CAMPOS_OBRIGATORIOS, MSG_PREENCHER_CAMPOS_PIX)
             return
         self.config.set("chave_pix", chave)
         self.config.set("cidade", cidade)
@@ -399,7 +427,7 @@ class PixMassaWidget(QWidget):
             file_path = os.path.join(pasta, f"qrcode_pix_{row+1}.png")
             gerar_qr_pix(payload, file_path)
             count += 1
-        QMessageBox.information(self, "Sucesso", f"{count} QR Codes gerados na pasta {pasta}")
+        QMessageBox.information(self, MSG_SUCESSO, MSG_QRS_GERADOS.format(count, pasta))
 
     def preencher_campos_perfil(self):
         perfil = self.perfil_destaque.perfil_ativo()
@@ -506,13 +534,13 @@ class PerfilCadastroDialog(QDialog):
         else:
             self.perfis_manager.add(perfil)
         self.atualizar_combo()
-        QMessageBox.information(self, "Perfil salvo", "Perfil salvo com sucesso!")
+        QMessageBox.information(self, MSG_PERFIL_SALVO_TITULO, MSG_PERFIL_SALVO)
     def remover_perfil(self):
         idx = self.combo.currentIndex()
         if idx < len(self.perfis_manager.all()):
             self.perfis_manager.remove(idx)
             self.atualizar_combo()
-            QMessageBox.information(self, "Perfil removido", "Perfil removido com sucesso!")
+            QMessageBox.information(self, MSG_PERFIL_REMOVIDO_TITULO, MSG_PERFIL_REMOVIDO)
 
 class PerfilDestaqueWidget(QWidget):
     def __init__(self, perfis_manager):
@@ -606,14 +634,14 @@ class MainWindow(QMainWindow):
         else:
             btn_config.setIcon(QIcon())
         btn_config.setToolTip("Configurar perfis de empresa")
-        btn_config.setStyleSheet("border:none; background:none; margin:8px;")
+        btn_config.setStyleSheet(ESTILO_BTN_CONFIG)
         btn_config.setFixedSize(32,32)
         btn_config.clicked.connect(self.abrir_perfis)
         self.addToolBarBreak()
         self.toolbar = self.addToolBar("")
         self.toolbar.setMovable(False)
         self.toolbar.addWidget(btn_config)
-        self.toolbar.setStyleSheet("background:transparent; border:none;")
+        self.toolbar.setStyleSheet(ESTILO_TOOLBAR)
     def abrir_perfis(self):
         dialog = PerfilCadastroDialog(self.perfis_manager)
         dialog.exec_()
